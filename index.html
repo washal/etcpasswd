@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!--
+Author: Wasim Halani 'washal'
+Blog: http://securitythoughts.wordpress.com
+Twitter: @washalsec
+Version: 1.0
+Last modified: 07-April-2014
+-->
+<html>
+<head>
+    <title>/etc/passwd Analysis</title>
+	<meta name="author" content="Wasim Halani">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <!-- <link rel="stylesheet" type="text/css" href="css/bootstrap-fileupload.min.css"/> -->
+    <script src="js/jquery-1.10.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- <script src="js/bootstrap-fileupload.min.js"></script> -->
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+	<script>    
+	$(document).ready(function (){
+		$.ajaxSetup ({  
+        cache: false  
+    	});  
+    	var ajax_load = "<img src='img/ajax-load.gif' alt='loading...' />";  
+    	
+		//  load() functions  
+	    var loadUrl = "results.php";  
+	    $("select").change(function(){
+	    	var nse = $("select").val();
+	    	$("#result").fadeIn();
+	        $("#result").html(ajax_load).load(loadUrl + " #categories","filename="+nse);
+     	});
+     	$('#fileinput').change(function(){
+     		$('#etcsubfile').val($(this).val());
+		});
+		
+		// http://hayageek.com/ajax-file-upload-jquery/
+		var options = { 
+    	beforeSend: function() 
+    	{
+	    	$("#progress").show();
+	    	//clear everything
+	    	$("#bar").width('0%');
+	    	$("#result").html("");
+			$("#percent").html("0%");
+    	},
+    	uploadProgress: function(event, position, total, percentComplete) 
+    	{
+	    	$("#bar").width(percentComplete+'%');
+	    	$("#percent").html(percentComplete+'%');    
+	    },
+    	success: function() 
+    	{
+	        $("#bar").width('100%');
+	    	$("#percent").html('100%');
+	    },
+		complete: function(response) 
+		{
+		$("#result").html(response.responseText);
+		},
+		error: function()
+		{
+		$("#result").html("<font color='red'> ERROR: unable to upload files</font>");
+		}     
+	}; 
+
+     $("#file").ajaxForm(options);
+
+
+  	});
+</script>
+</head>
+
+<body>
+<div class="container">
+<br />
+<br />
+<br />
+<div class="row col-md-6 well">
+	<form id="file"action="results.php" method="post" enctype="multipart/form-data" class="form-inline">
+		<h2>Raw /etc/passwd File: </h2>
+		<input type="file" name="fileinput" style="display: none;" id="fileinput" /><br/>
+		<div class="input-group col-md-9">
+			<input type="text" name="subfile" id="etcsubfile" class="form-control">
+			<span class="input-group-btn">
+    		<button type="button" class="btn btn-default" onclick='$("#fileinput").click();'>Browse</button>
+    		</span>
+		</div>
+		<br/>
+		<button type="submit" class="btn btn-info">Submit</button>
+		<a href="demo.htm"><label class="btn btn-success">Demo</label></a>
+	</form>
+</div>
+</div
+
+<div class="container">
+<div id="result" class="row">
+	
+</div>
+</div>
+
+
+<script>
+$(document).ready(function()
+{
+});
+
+</script>
+
+</body>
+</html>
